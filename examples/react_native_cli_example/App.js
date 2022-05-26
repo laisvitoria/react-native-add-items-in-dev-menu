@@ -4,8 +4,6 @@ import { StyleSheet, View, Text } from 'react-native';
 import { useDevSettings } from 'react-native-add-items-in-dev-menu';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
   const loading = useDevSettings()
 
   if (loading) {
@@ -14,7 +12,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Bem vindo ao app de exemplo com expo!</Text>
+      <Text>Bem vindo ao app de exemplo com react native cli</Text>
+      <Text>clique em "D" para abrir o dev menu</Text>
     </View>
   );
 }
