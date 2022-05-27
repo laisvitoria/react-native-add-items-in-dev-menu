@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Alert, DevSettings, Platform } from 'react-native'
-// import AsyncStorage from '@react-native-community/async-storage'
+import { DevSettings, Platform } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { DebugConfig } from '../config'
 
@@ -15,7 +15,7 @@ const useDevSettings = () => {
   useEffect(() => {
     if (__DEV__) {
       const keys = [Debug.FIXTURE, Debug.STORYBOOK]
-      /*AsyncStorage.multiGet(keys).then((result) => {
+      AsyncStorage.multiGet(keys).then((result) => {
         result.forEach(([key, value]) => {
           const parsedValue = Boolean(JSON.parse(value || 'false'))
           if (key === Debug.FIXTURE) {
@@ -24,28 +24,23 @@ const useDevSettings = () => {
           if (key === Debug.STORYBOOK) {
             DebugConfig.useStorybook = parsedValue
           }
-        })*/
+        })
         setLoading(false)
-      //})
+      })
     }
   }, [])
 
   useEffect(() => {
     if (!loading && __DEV__) {
       DevSettings.addMenuItem(`${getAlternateTitle(DebugConfig.useFixtures)} Fixtures`, () => {
-        //AsyncStorage.setItem(Debug.FIXTURE, JSON.stringify(!DebugConfig.useFixtures))
+        AsyncStorage.setItem(Debug.FIXTURE, JSON.stringify(!DebugConfig.useFixtures))
         DevSettings.reload()
       })
       DevSettings.addMenuItem(`${getAlternateTitle(DebugConfig.useStorybook)} Storybook`, () => {
-        //AsyncStorage.setItem(Debug.STORYBOOK, JSON.stringify(!DebugConfig.useStorybook))
+        AsyncStorage.setItem(Debug.STORYBOOK, JSON.stringify(!DebugConfig.useStorybook))
         DevSettings.reload()
       })
     }
-    DevSettings.addMenuItem(`${getAlternateTitle(DebugConfig.useStorybook)} Alert test`, () => {
-        //AsyncStorage.setItem(Debug.STORYBOOK, JSON.stringify(!DebugConfig.useStorybook))
-        Alert.alert('Showing secret dev screen!');
-        DevSettings.reload()
-    })
   }, [loading])
 
   return loading
