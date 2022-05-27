@@ -11,17 +11,11 @@ npm install react-native-add-items-in-dev-menu
 ## Usage
 
 ```js
-import { multiply } from "react-native-add-items-in-dev-menu";
+import { useDevSettings } from "react-native-add-items-in-dev-menu";
 
 // ...
 
-const result = await multiply(3, 7);
+const { loading, value } = useDevSettings({name: "Title to show in dev menu"})
 ```
 
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
-## License
-
-MIT
+readme in construction...
