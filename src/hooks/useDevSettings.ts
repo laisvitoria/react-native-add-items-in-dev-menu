@@ -2,44 +2,53 @@ import { useEffect, useState } from 'react'
 import { DevSettings, Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-type Options = {
+type Item = {
   name: string;
   action?: () => void;
 };
 
-const useDevSettings = ({
-  name,
-  action
-}: Options) => {
+type Items = Item[];
+
+const useDevSettings = (items: Items) => {
   const [loading, setLoading] = useState(__DEV__)
-  const [value, setValue] = useState(false)
+  const [value, setValue] = useState<any>()
+  const [values, setValues] = useState<any[]>([])
 
   useEffect(() => {
+    const keys: string[] = []
+    let res: string | undefined = ''
+    let itemsResult: any[] = []
     if (__DEV__) {
-      const keys = [`@debug/${name.toLowerCase()}`]
+      items?.map(item => {
+        keys.push(`@debug/${item.name.toLowerCase()}`)
+      })
       AsyncStorage.multiGet(keys).then((result) => {
         result.forEach(([key, value]) => {
           const parsedValue = Boolean(JSON.parse(value || 'false'))
-          if (key === `@debug/${name.toLowerCase()}`) {
-            setValue(parsedValue)
-          }
+          res = keys.find(item => key === item.toLowerCase())
+          itemsResult.push({name: res?.toLowerCase().slice(7), enabled: parsedValue})
         })
-        setLoading(false)
+        setValues([...values, ...itemsResult])
       })
     }
-  }, [])
+    setLoading(false)
+    }, [!items])
 
+  console.log("values: ", values)
+  // entra qui quando clica no item
   useEffect(() => {
-    if (!loading && __DEV__) {
-      DevSettings.addMenuItem(`${getAlternateTitle(value)} ${name}`, () => {
-        //action()
-        AsyncStorage.setItem(`@debug/${name.toLowerCase()}`, JSON.stringify(!value))
-        DevSettings.reload()
+    if (!loading && __DEV__ && !!values) {
+      items?.map(item => {
+        DevSettings.addMenuItem(`${getAlternateTitle(values.find(value => value?.name === item.name.toLowerCase())?.enabled)} ${item.name}`, () => {
+          item.action && item.action()
+          AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!values.find(value => value?.name === item.name.toLowerCase())?.enabled))
+          DevSettings.reload()
+        })
       })
     }
-  }, [loading])
+  }, [loading, !items, values])
 
-  return { loading, value };
+  return { loading, value, values };
 }
 
 const getAlternateTitle = (value: boolean) => {
