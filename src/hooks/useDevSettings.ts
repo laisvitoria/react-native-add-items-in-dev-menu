@@ -11,7 +11,6 @@ type Items = Item[];
 
 const useDevSettings = (items: Items) => {
   const [loading, setLoading] = useState(__DEV__)
-  const [value, setValue] = useState<any>()
   const [values, setValues] = useState<any[]>([])
 
   useEffect(() => {
@@ -35,7 +34,6 @@ const useDevSettings = (items: Items) => {
     }, [!items])
 
   console.log("values: ", values)
-  // entra qui quando clica no item
   useEffect(() => {
     if (!loading && __DEV__ && !!values) {
       items?.map(item => {
@@ -48,7 +46,7 @@ const useDevSettings = (items: Items) => {
     }
   }, [loading, !items, values])
 
-  return { loading, value, values };
+  return { loading, values };
 }
 
 const getAlternateTitle = (value: boolean) => {

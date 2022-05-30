@@ -15,7 +15,10 @@ import { useDevSettings } from "react-native-add-items-in-dev-menu";
 
 // ...
 
-const { loading, value } = useDevSettings({name: "Title to show in dev menu"})
+const { loading, value } = useDevSettings([
+    {name: "Title to show in dev menu"},
+    {name: "Say hello", action: () => Alert.alert("Hello!")}
+])
 ```
 
 readme in construction...
