@@ -3,15 +3,20 @@ import { DevSettings, Platform } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type Item = {
-  name: string;
-  action?: () => void;
+  name: string
+  action?: () => void
 };
 
-type Items = Item[];
+type Items = Item[]
+
+type Value = {
+  name: string,
+  enabled: boolean
+}
 
 const useDevSettings = (items: Items) => {
   const [loading, setLoading] = useState(__DEV__)
-  const [values, setValues] = useState<any[]>([])
+  const [values, setValues] = useState<Value[]>([])
 
   useEffect(() => {
     const keys: string[] = []
@@ -31,9 +36,8 @@ const useDevSettings = (items: Items) => {
       })
     }
     setLoading(false)
-    }, [!items])
+  }, [!items])
 
-  console.log("values: ", values)
   useEffect(() => {
     if (!loading && __DEV__ && !!values) {
       items?.map(item => {
@@ -46,10 +50,17 @@ const useDevSettings = (items: Items) => {
     }
   }, [loading, !items, values])
 
-  return { loading, values };
+  const state: {[key:string]: boolean} = {}
+  for (let i=0; i < values.length; i++) {
+    if (values.length !== 0) {
+      state[getKeyTransformed(values[i].name)] = values[i].enabled
+    }
+  }
+
+  return { loading, state };
 }
 
-const getAlternateTitle = (value: boolean) => {
+const getAlternateTitle = (value: boolean | undefined) => {
   if (Platform.OS === 'android') {
     return 'Toggle'
   }
@@ -57,6 +68,17 @@ const getAlternateTitle = (value: boolean) => {
     return 'Enable'
   }
   return 'Disable'
+}
+
+const getKeyTransformed = (key: string): string => {
+  let transformedKey = key.replace(
+    /(^\w{1})|(\s+\w{1})/g, // seleciona a primeira letra de cada palavra
+    letter => letter
+      .toUpperCase()
+      .replace(" ", "")
+  )
+
+  return `use${transformedKey}`
 }
 
 export default useDevSettings

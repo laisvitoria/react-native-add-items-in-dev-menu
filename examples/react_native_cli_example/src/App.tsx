@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 
-import { StyleSheet, View, Text, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Alert, TouchableOpacity } from 'react-native';
 import { useDevSettings } from 'react-native-add-items-in-dev-menu';
 
 export default function App() {
-  const { loading, values } = useDevSettings([
+  const { loading, state } = useDevSettings([
     {name: "Fixtures"},
     {name: "Storybook"},
     {name: "Clear AssyncStorage", action: async () => await AsyncStorage.clear()},
@@ -38,15 +38,12 @@ export default function App() {
     return <View />
   }
 
+  console.log(state)
   return (
     <View style={styles.container}>
       <Text>Bem vindo ao app de exemplo com react native cli</Text>
       <Text>clique em "D" para abrir o dev menu</Text>
-      <FlatList
-        data={values}
-        renderItem={({item}) => <Text>{item?.name}:{item.enabled.toString()}</Text>}
-      />
-      <View>
+      <View style={styles.containerButton}>
         <TouchableOpacity onPress={() => setStringValue('Lais')}>
           <Text>SET NAME</Text>
         </TouchableOpacity>
@@ -69,4 +66,7 @@ const styles = StyleSheet.create({
     height: 60,
     marginVertical: 20,
   },
+  containerButton: {
+    flexDirection: 'row'
+  }
 });
