@@ -24,6 +24,7 @@ const useDevSettings = (items: Items) => {
     let itemsResult: any[] = []
     if (__DEV__) {
       items?.map(item => {
+        item.action === undefined &&
         keys.push(`@debug/${item.name.toLowerCase()}`)
       })
       AsyncStorage.multiGet(keys).then((result) => {
@@ -41,9 +42,14 @@ const useDevSettings = (items: Items) => {
   useEffect(() => {
     if (!loading && __DEV__ && !!values) {
       items?.map(item => {
+        item.action === undefined ?
+        DevSettings.addMenuItem(`${getAlternateTitle(values.find(value => value?.name === item.name.toLowerCase())?.enabled)} ${item.name}`, () => {
+          AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!values.find(value => value?.name === item.name.toLowerCase())?.enabled))
+          DevSettings.reload()
+        })
+        :
         DevSettings.addMenuItem(`${getAlternateTitle(values.find(value => value?.name === item.name.toLowerCase())?.enabled)} ${item.name}`, () => {
           item.action && item.action()
-          AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!values.find(value => value?.name === item.name.toLowerCase())?.enabled))
           DevSettings.reload()
         })
       })
