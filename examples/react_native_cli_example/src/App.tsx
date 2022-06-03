@@ -2,16 +2,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 
-import { StyleSheet, View, Text, Alert, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Alert, TouchableOpacity } from 'react-native';
 import { useDevSettings } from 'react-native-add-items-in-dev-menu';
 
 export default function App() {
   const { loading, state } = useDevSettings([
+    {name: "Title to show in dev menu"},
     {name: "Fixtures"},
-    {name: "Storybook"},
     {name: "Clear AssyncStorage", action: async () => await AsyncStorage.clear()},
-    {name: "Dizer olá num alert", action: () => Alert.alert("olá")},
-    {name: "Teste"}
+    {name: "Say hello", action: () => Alert.alert("Hello!")}
   ])
 
   const [name, setName] = React.useState('')
@@ -43,6 +42,7 @@ export default function App() {
 
   console.log(state)
   return (
+    <>
     <View style={styles.container}>
       <Text style={styles.title}>Bem vindo ao app de exemplo com react native cli</Text>
       <Text style={styles.subtitle}>clique em "D" para abrir o dev menu</Text>
@@ -50,14 +50,18 @@ export default function App() {
         <Text>{name}</Text>
       </View>
       <View style={styles.containerButton}>
-        <TouchableOpacity style={styles.button} onPress={() => setStringValue('Lais')}>
-          <Text style={styles.textButton}>SET NAME</Text>
+        <TouchableOpacity style={styles.button} onPress={() => setStringValue('Texto do storage')}>
+          <Text style={styles.textButton}>guardar no storage</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => getMyStringValue()}>
-          <Text style={styles.textButton}>GET NAME</Text>
+          <Text style={styles.textButton}>pegar do storage</Text>
         </TouchableOpacity>
       </View>
     </View>
+    {state.useFixtures && <View style={styles.fixtures}>
+        <Text style={styles.textButton}>Fixtures habilitadas</Text>
+      </View>}
+    </>
   );
 }
 
@@ -96,5 +100,11 @@ const styles = StyleSheet.create({
   input: {
     borderColor: 'gray',
     borderRadius: 12
-  }
+  },
+  fixtures: {
+    backgroundColor: '#d0688c',
+    margin: 0,
+    alignItems: 'center',
+    paddingVertical: 5
+  },
 });

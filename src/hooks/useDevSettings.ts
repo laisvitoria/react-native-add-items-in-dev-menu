@@ -48,7 +48,7 @@ const useDevSettings = (items: Items) => {
           DevSettings.reload()
         })
         :
-        DevSettings.addMenuItem(`${getAlternateTitle(values.find(value => value?.name === item.name.toLowerCase())?.enabled)} ${item.name}`, () => {
+        DevSettings.addMenuItem(`${item.name}`, () => {
           item.action && item.action()
           DevSettings.reload()
         })
