@@ -2,7 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 
-import { StyleSheet, View, Text, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Alert, TouchableOpacity, TextInput } from 'react-native';
 import { useDevSettings } from 'react-native-add-items-in-dev-menu';
 
 export default function App() {
@@ -13,6 +13,8 @@ export default function App() {
     {name: "Dizer olá num alert", action: () => Alert.alert("olá")},
     {name: "Teste"}
   ])
+
+  const [name, setName] = React.useState('')
 
   const setStringValue = async (value: string) => {
     console.log(value)
@@ -27,7 +29,7 @@ export default function App() {
   const getMyStringValue = async () => {
     try {
       let value = await AsyncStorage.getItem('@name')
-      console.log(JSON.parse(value))
+      setName(JSON.parse(value))
       return JSON.parse(value);
     } catch(e) {
       // read error
@@ -42,14 +44,17 @@ export default function App() {
   console.log(state)
   return (
     <View style={styles.container}>
-      <Text>Bem vindo ao app de exemplo com react native cli</Text>
-      <Text>clique em "D" para abrir o dev menu</Text>
+      <Text style={styles.title}>Bem vindo ao app de exemplo com react native cli</Text>
+      <Text style={styles.subtitle}>clique em "D" para abrir o dev menu</Text>
       <View style={styles.containerButton}>
-        <TouchableOpacity onPress={() => setStringValue('Lais')}>
-          <Text>SET NAME</Text>
+        <Text>{name}</Text>
+      </View>
+      <View style={styles.containerButton}>
+        <TouchableOpacity style={styles.button} onPress={() => setStringValue('Lais')}>
+          <Text style={styles.textButton}>SET NAME</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => getMyStringValue()}>
-          <Text>GET NAME</Text>
+        <TouchableOpacity style={styles.button} onPress={() => getMyStringValue()}>
+          <Text style={styles.textButton}>GET NAME</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -62,12 +67,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+  title: {
+    margin: 20,
+    fontSize: 18,
+    color: '#000000',
+    textAlign: 'center'
+  },
+  subtitle: {
+    fontSize: 15
   },
   containerButton: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    margin: 20,
+  },
+  button: {
+    flex: 1,
+    justifyContent: 'space-around',
+    backgroundColor: '#d0688c',
+    margin: 20,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 12
+  },
+  textButton: {
+    color: '#ffffff',
+  },
+  input: {
+    borderColor: 'gray',
+    borderRadius: 12
   }
 });
