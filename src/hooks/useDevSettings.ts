@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DevSettings, Platform } from 'react-native'
+import { DevSettings } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type Item = {
@@ -42,9 +42,10 @@ const useDevSettings = (items: Items) => {
   useEffect(() => {
     if (!loading && __DEV__ && !!values) {
       items?.map(item => {
+        let itemIsEnabled = values.find(value => value?.name === item.name.toLowerCase())?.enabled
         item.action === undefined ?
         DevSettings.addMenuItem(`Toggle ${item.name}`, () => {
-          AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!values.find(value => value?.name === item.name.toLowerCase())?.enabled))
+          AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!itemIsEnabled))
           DevSettings.reload()
         })
         :
