@@ -43,7 +43,7 @@ const useDevSettings = (items: Items) => {
     if (!loading && __DEV__ && !!values) {
       items?.map(item => {
         item.action === undefined ?
-        DevSettings.addMenuItem(`${getAlternateTitle(values.find(value => value?.name === item.name.toLowerCase())?.enabled)} ${item.name}`, () => {
+        DevSettings.addMenuItem(`Toggle ${item.name}`, () => {
           AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!values.find(value => value?.name === item.name.toLowerCase())?.enabled))
           DevSettings.reload()
         })
@@ -66,19 +66,11 @@ const useDevSettings = (items: Items) => {
   return { loading, state };
 }
 
-const getAlternateTitle = (value: boolean | undefined) => {
-  if (Platform.OS === 'android') {
-    return 'Toggle'
-  }
-  if (!value) {
-    return 'Enable'
-  }
-  return 'Disable'
-}
+const selectTheFirstLetter = /(^\w{1})|(\s+\w{1})/g
 
 const getKeyTransformed = (key: string): string => {
   let transformedKey = key.replace(
-    /(^\w{1})|(\s+\w{1})/g, // seleciona a primeira letra de cada palavra
+    selectTheFirstLetter,
     letter => letter
       .toUpperCase()
       .replace(" ", "")
