@@ -7,9 +7,9 @@ import { useDevSettings } from 'react-native-add-items-in-dev-menu';
 
 export default function App() {
   const { loading, state } = useDevSettings([
-    {name: "Title to show in dev menu"},
-    {name: "Fixtures"},
-    {name: "Clear AssyncStorage", action: async () => await AsyncStorage.clear()},
+    {name: "Title to show in dev menu", enableReload: true},
+    {name: "Fixtures", enableReload: true},
+    {name: "Clear AssyncStorage", action: async () => await AsyncStorage.clear(), enableReload: true},
     {name: "Say hello", action: () => Alert.alert("Hello!")}
   ])
 
