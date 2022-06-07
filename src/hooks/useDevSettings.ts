@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { DevSettings } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type Item = {
   name: string
   action?: () => void
+  enableReload?: boolean
 };
 
 type Items = Item[]
@@ -31,7 +32,10 @@ const useDevSettings = (items: Items) => {
         result.forEach(([key, value]) => {
           const parsedValue = Boolean(JSON.parse(value || 'false'))
           res = keys.find(item => key === item.toLowerCase())
-          itemsResult.push({name: res?.toLowerCase().slice(7), enabled: parsedValue})
+          itemsResult.push({
+            name: res?.toLowerCase().slice(7),
+            enabled: parsedValue
+          })
         })
         setValues([...values, ...itemsResult])
       })
@@ -43,26 +47,22 @@ const useDevSettings = (items: Items) => {
     if (!loading && __DEV__ && !!values) {
       items?.map(item => {
         let itemIsEnabled = values.find(value => value?.name === item.name.toLowerCase())?.enabled
-        item.action === undefined ?
-        DevSettings.addMenuItem(`Toggle ${item.name}`, () => {
-          AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!itemIsEnabled))
-          DevSettings.reload()
-        })
-        :
-        DevSettings.addMenuItem(`${item.name}`, () => {
-          item.action && item.action()
-          DevSettings.reload()
+        DevSettings.addMenuItem(`${!item.action ? "Toggle" : ""} ${item.name}`, () => {
+          item.action 
+          ? item.action()
+          : AsyncStorage.setItem(`@debug/${item.name.toLowerCase()}`, JSON.stringify(!itemIsEnabled))
+          item.enableReload && DevSettings.reload()
         })
       })
     }
   }, [loading, !items, values])
 
   const state: {[key:string]: boolean} = {}
-  for (let i=0; i < values.length; i++) {
-    if (values.length !== 0) {
-      state[getKeyTransformed(values[i].name)] = values[i].enabled
-    }
-  }
+  useMemo(() => (
+    values.forEach(value => {
+      state[getKeyTransformed(value.name)] = value.enabled
+    })
+  ), [values])
 
   return { loading, state };
 }
